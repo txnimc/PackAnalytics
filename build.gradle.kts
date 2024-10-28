@@ -9,15 +9,19 @@ val templateSettings = object : BlahajSettings {
 		}
 
 		override fun addFabric(mod : ModData, deps: DependencyHandler) {
+			if (mod.version == "1.21.1")
+				deps.modImplementation(modrinth("better-compatibility-checker", "i3Buju9g"))
+			else
+				deps.modImplementation(modrinth("better-compatibility-checker", "gatP97QZ"))
 
 		}
 
 		override fun addForge(mod : ModData, deps: DependencyHandler) {
-
+			deps.modImplementation(modrinth("better-compatibility-checker", "build.58+mc1.20"))
 		}
 
 		override fun addNeo(mod : ModData, deps: DependencyHandler) {
-
+			deps.modImplementation(modrinth("better-compatibility-checker", "cfm6GZlI"))
 		}
 	}
 
