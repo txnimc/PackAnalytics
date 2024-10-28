@@ -1,11 +1,11 @@
-package toni.examplemod.foundation.data;
+package toni.packanalytics.foundation.data;
 
 #if FABRIC
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.core.HolderLookup;
-import toni.examplemod.ExampleMod;
-import toni.examplemod.foundation.config.AllConfigs;
+import toni.packanalytics.PackAnalytics;
+import toni.packanalytics.foundation.config.AllConfigs;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -28,7 +28,7 @@ public class ConfigLangDatagen extends FabricLanguageProvider {
 
     @Override
     public String getName() {
-        return "ExampleMod Data Gen";
+        return "PackAnalytics Data Gen";
     }
 }
 #endif

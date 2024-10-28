@@ -1,15 +1,15 @@
-package toni.examplemod.foundation.data;
+package toni.packanalytics.foundation.data;
 
 #if FABRIC
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
-import toni.examplemod.ExampleMod;
+import toni.packanalytics.PackAnalytics;
 
-public class ExampleModDatagen  implements DataGeneratorEntrypoint {
+public class PackAnalyticsDatagen  implements DataGeneratorEntrypoint {
 
     @Override
     public String getEffectiveModId() {
-        return ExampleMod.ID;
+        return PackAnalytics.ID;
     }
 
     @Override

@@ -1,4 +1,4 @@
 {
-  "example_mod.configuration.client": "client",
-  "example_mod.configuration.example": "example"
+  "packanalytics.configuration.client": "client",
+  "packanalytics.configuration.example": "example"
 }
