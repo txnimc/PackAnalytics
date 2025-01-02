@@ -9,19 +9,36 @@ val templateSettings = object : BlahajSettings {
 		}
 
 		override fun addFabric(mod : ModData, deps: DependencyHandler) {
-			if (mod.version == "1.21.1")
-				deps.modImplementation(modrinth("better-compatibility-checker", "i3Buju9g"))
-			else
-				deps.modImplementation(modrinth("better-compatibility-checker", "gatP97QZ"))
+			when (mod.version) {
+				"1.20.1" -> {
+					deps.modImplementation(modrinth("better-compatibility-checker", "gatP97QZ"))
+				}
+				"1.21.1" -> {
+					deps.modImplementation(modrinth("better-compatibility-checker", "i3Buju9g"))
 
+				}
+				"1.21.4" -> {
+
+				}
+			}
 		}
 
 		override fun addForge(mod : ModData, deps: DependencyHandler) {
 			deps.modImplementation(modrinth("better-compatibility-checker", "build.58+mc1.20"))
+			deps.include(deps.modApi("dev.su5ed.sinytra.fabric-api:fabric-lifecycle-events-v1:+")!!)
 		}
 
 		override fun addNeo(mod : ModData, deps: DependencyHandler) {
-			deps.modImplementation(modrinth("better-compatibility-checker", "cfm6GZlI"))
+			when (mod.version) {
+				"1.21.1" -> {
+					deps.modImplementation(modrinth("better-compatibility-checker", "cfm6GZlI"))
+					deps.include(deps.modApi("org.sinytra.forgified-fabric-api:fabric-lifecycle-events-v1:2.3.12+")!!)
+				}
+				"1.21.4" -> {
+					deps.include(deps.modApi("org.sinytra.forgified-fabric-api:fabric-lifecycle-events-v1:2.4.0+")!!)
+				}
+			}
+
 		}
 	}
 
@@ -47,7 +64,7 @@ val templateSettings = object : BlahajSettings {
 plugins {
 	`maven-publish`
 	application
-	id("toni.blahaj") version "1.0.9"
+	id("toni.blahaj") version "1.0.12"
 	kotlin("jvm")
 	kotlin("plugin.serialization")
 	id("dev.kikugie.j52j") version "1.0"

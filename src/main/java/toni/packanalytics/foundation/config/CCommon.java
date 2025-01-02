@@ -37,7 +37,7 @@ public class CCommon extends ConfigBase {
 
     public final CValue<String, ConfigValue<String>> endpoint_url = new CValue<>("Metrics Endpoint URL", builder -> builder.define("Metrics Endpoint URL", ""), "URL to send data to.");
     public final CValue<String, ConfigValue<String>> packID = new CValue<>("Pack ID", builder -> builder.define("Pack ID", ""), "Identifier for this modpack");
-    public final ConfigInt updateRate = i(10, "Update Rate", "Interval between keepalive requests, in seconds.");
+    public final ConfigInt updateRate = i(30, "Update Rate", "Interval between keepalive requests, in minutes.");
 
     @Override
     public String getName() {

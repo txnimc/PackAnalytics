@@ -1,5 +1,8 @@
 package toni.packanalytics;
 
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import toni.lib.utils.PlatformUtils;
 import toni.lib.utils.VersionUtils;
 import toni.packanalytics.foundation.config.AllConfigs;
@@ -57,7 +60,7 @@ import java.util.concurrent.TimeUnit;
 #if FORGELIKE
 @Mod("packanalytics")
 #endif
-public class PackAnalytics #if FABRIC implements ModInitializer, ClientModInitializer #endif
+public class PackAnalytics #if FABRIC implements ModInitializer #endif
 {
     public static final String MODNAME = "Pack Analytics";
     public static final String ID = "packanalytics";
@@ -71,7 +74,6 @@ public class PackAnalytics #if FABRIC implements ModInitializer, ClientModInitia
 
         #if FORGELIKE
         modEventBus.addListener(this::commonSetup);
-        modEventBus.addListener(this::clientSetup);
 
         AllConfigs.register((type, spec) -> {
             #if FORGE
@@ -96,40 +98,49 @@ public class PackAnalytics #if FABRIC implements ModInitializer, ClientModInitia
             });
         #endif
 
+        if (isDedicatedServer()) {
+            ServerLifecycleEvents.SERVER_STOPPING.register((mc) -> sendKeepAliveRequest(true));
+        }
+        else {
+            ClientLifecycleEvents.CLIENT_STOPPING.register((mc) -> sendKeepAliveRequest(true));
+        }
+
         startKeepAliveTask();
-    }
-
-    #if FABRIC @Override #endif
-    public void onInitializeClient() {
-
     }
 
     private void startKeepAliveTask() {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        scheduler.scheduleAtFixedRate(this::sendKeepAliveRequest, 0, AllConfigs.common().updateRate.get(), TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(() -> sendKeepAliveRequest(false), 1, AllConfigs.common().updateRate.get(), TimeUnit.MINUTES);
     }
 
-    private void sendKeepAliveRequest() {
-        var packID = AllConfigs.common().packID.get();
-        String uri = AllConfigs.common().endpoint_url.get();
-        if (packID.isEmpty() || uri.isEmpty()) {
-            return;
-        }
-
-        String packIDParam = "packID=" + packID;
-        if (!uri.endsWith("/"))
-            uri += "/";
-
-        String packVersion = "1.0.0";
-        if (PlatformUtils.isModLoaded("bcc"))
-            packVersion = BCCCompat.getBCCVersion();
-
-        if (packVersion.equals("CHANGE_ME"))
-            packVersion = "1.0.0";
-
-        String urlString = uri + "keepalive?" + packIDParam + "&server=" + isDedicatedServer() + "&version=" + packVersion;
-
+    private void sendKeepAliveRequest(boolean disconnect) {
         try {
+            var packID = AllConfigs.common().packID.get();
+            String uri = AllConfigs.common().endpoint_url.get();
+
+            if (packID.isEmpty()) {
+                LOGGER.error("Null Pack ID! Analytics will not send!");
+                return;
+            }
+
+            if (uri.isEmpty()) {
+                LOGGER.error("Null URL endpoint! Analytics will not send.");
+                return;
+            }
+
+            String packIDParam = "packID=" + packID;
+            if (!uri.endsWith("/"))
+                uri += "/";
+
+            String packVersion = "1.0.0";
+            if (PlatformUtils.isModLoaded("bcc"))
+                packVersion = BCCCompat.getBCCVersion();
+
+            if (packVersion.equals("CHANGE_ME"))
+                packVersion = "1.0.0";
+
+            String urlString = uri + (disconnect ? "logoff?" : "keepalive?") + packIDParam + "&server=" + isDedicatedServer() + "&version=" + packVersion;
+
             URL url = new URL(urlString);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
@@ -156,6 +167,5 @@ public class PackAnalytics #if FABRIC implements ModInitializer, ClientModInitia
     // Forg event stubs to call the Fabric initialize methods, and set up cloth config screen
     #if FORGELIKE
     public void commonSetup(FMLCommonSetupEvent event) { onInitialize(); }
-    public void clientSetup(FMLClientSetupEvent event) { onInitializeClient(); }
     #endif
 }

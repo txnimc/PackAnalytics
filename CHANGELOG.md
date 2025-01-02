@@ -1,2 +1,1 @@
-## Changelog
-- Initial release
+Add log out request so that clients are removed from the server immediately

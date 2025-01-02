@@ -18,9 +18,6 @@
 		"main": [
 			"${group}.${namespace}.${name}"
 		],
-		"client": [
-			"${group}.${namespace}.${name}"
-		],
 		"fabric-datagen": [
 			"${group}.${namespace}.foundation.data.${name}Datagen"
 		]
